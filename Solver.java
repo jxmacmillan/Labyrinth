@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import javax.sql.rowset.CachedRowSet;
 
 public class Solver {
     private ArrayList solution;
