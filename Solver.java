@@ -1,39 +1,48 @@
 import java.util.ArrayList;
 
 public class Solver {
-    private ArrayList solution;
-    private Labyrinth labyrinthine;
-    private final int rows;
-    private final int cols;
-    private final int[] moves = new int[] {0, 1, 2, 3};
+    private final static ArrayList<Integer> firstSolution = new ArrayList<Integer>();
+    private static Integer[] middleSolution;
+    private static int[] finalSolution;
+    private static int rows;
+    private static int cols;
+    private final static int[] moves = new int[] {0, 1, 2, 3};
 
-    public Solver(int row, int col) {
-        this.rows = row;
-        this.cols = col;
-        labyrinthine = new Labyrinth(row, col);
-        labyrinthine.printGrid();
-    }
 
-    public int[] solve(Labyrinth l){
-        this.findSafeMove(0,0,l);
-        int[] finalSolution = new int[solution.size()];
-            for(int i = 0; i < solution.size(); i++){
-                finalSolution[i] = (int) solution.get(i);
+    /**
+     * Solves a given labyrinth.
+     * @param l the labyrinth to solve
+     * @return the solution to the labyrinth in an array of ints (0 = up, 1 = down, 2 = left, 3 = right)
+     */
+    public static int[] solve(Labyrinth l){
+        findSafeMove(0,0,l);
+        middleSolution = new Integer[firstSolution.size()];
+        firstSolution.toArray(middleSolution);
+            //copies the contents of the middleSolution array into the finalSolution array
+            finalSolution = new int[middleSolution.length];
+            for(int i = 0; i < middleSolution.length; i++){
+                finalSolution[i] = middleSolution[i];
             }
+        System.out.println(firstSolution.toString());
         return finalSolution;
     }
 
-    public void findSafeMove(int row, int col, Labyrinth l){
-        ArrayList<Integer> solution = new ArrayList<Integer>();
+    /**
+     * Finds a safe move to make
+     * @param row the row of the current position
+     * @param col the column of the current position
+     * @param l the labyrinth to solve
+     */
+    public static void findSafeMove(int row, int col, Labyrinth l){
         if(row==rows-1 && col==cols-1){
-            
-             //break out of the recursion FIX
+            return;
+             //break out of the recursion
         }
         
         for(int i = 0; i < moves.length; i++){
             int x = 0;
             int y = 0;
-            //case switch for each direction
+            //case switch which tries each direction
             switch(moves[i]){
                 case 0: x=0; y=1;
                 case 1: x=0;y=-1;
@@ -41,16 +50,19 @@ public class Solver {
                 case 3: x=1;y=0;
             }
             if(l.isStone(row + x, col + y)){
-                solution.add(moves[i]);
+                firstSolution.add(moves[i]);
                 findSafeMove(row + x, col + y, l);
-                solution.remove(moves[i]);
+                firstSolution.remove(moves[i]);
             }
         }
     }
 
 
     public static void main(String[] args) {
-        Solver s = new Solver(10, 10);
-        s.solve(s.labyrinthine);
+        rows = 10;//Integer.parseInt(args[0]);
+        cols = 10;//Integer.parseInt(args[1]);
+        Labyrinth labyrinthine = new Labyrinth(rows, cols);
+        labyrinthine.printGrid();
+        solve(labyrinthine);
     }
 }
